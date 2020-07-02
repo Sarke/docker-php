@@ -101,3 +101,4 @@ RUN chmod 700 \
 	&& composer global dumpautoload --optimize \
 	&& composer clear-cache
 
+WORKDIR /app
