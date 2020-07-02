@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+# Enable xdebug by ENV variable
+if [ 0 -ne "${PHP_ENABLE_XDEBUG:-0}" ] ; then
+	docker-php-ext-enable xdebug
+	echo "xdebug: on"
+else
+	echo "xdebug: off"
+fi
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+	if [ -x "$(command -v apache2-foreground)" ]; then
+		set -- apache2-foreground "$@"
+	else
+		set -- php "$@"
+	fi
+fi
+
+exec "$@"
