@@ -65,10 +65,11 @@ RUN set -ex \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
 	&& pecl install \
-		event redis imagick igbinary mcrypt xdebug \
+		event redis imagick igbinary xdebug \
 	&& docker-php-ext-enable \
-		event redis imagick igbinary mcrypt \
-	&& pecl install uv-beta ssh2-beta \
+		event redis imagick igbinary \
+	&& pecl install \
+		uv-beta ssh2-beta \
 	&& docker-php-ext-enable \
 		uv ssh2 \
 	&& rm -rf /tmp/* \
