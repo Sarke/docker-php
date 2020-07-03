@@ -45,6 +45,7 @@ RUN set -ex \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 RUN set -ex \
+	&& docker-php-source extract \
 	&& docker-php-ext-configure gd \
 		--enable-gd \
 		--with-freetype \
@@ -64,13 +65,14 @@ RUN set -ex \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
 	&& pecl install \
-		event redis imagick igbinary xdebug \
+		event redis imagick igbinary mcrypt xdebug \
 	&& docker-php-ext-enable \
-		event redis imagick igbinary \
+		event redis imagick igbinary mcrypt \
 	&& pecl install uv-beta ssh2-beta \
 	&& docker-php-ext-enable \
 		uv ssh2 \
-	&& rm -rf /tmp/*
+	&& rm -rf /tmp/* \
+	&& docker-php-source delete
 
 RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 	&& curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s "https://blackfire.io/api/v1/releases/probe/php/linux/amd64/{$version}" \
