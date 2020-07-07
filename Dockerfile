@@ -65,9 +65,9 @@ RUN set -ex \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
 	&& pecl install \
-		event redis imagick igbinary xdebug \
+		event redis imagick igbinary ast xdebug \
 	&& docker-php-ext-enable \
-		event redis imagick igbinary \
+		event redis imagick igbinary ast \
 	&& pecl install \
 		uv-beta ssh2-beta \
 	&& docker-php-ext-enable \
