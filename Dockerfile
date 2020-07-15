@@ -59,8 +59,7 @@ RUN set -ex \
 	&& docker-php-ext-install \
 		imap \
 	&& docker-php-ext-install \
-		pcntl posix sockets \
-	&& docker-php-ext-install \
+		pcntl posix sockets ffi \
 		soap zip curl bcmath exif \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
