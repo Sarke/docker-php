@@ -18,6 +18,7 @@ RUN set -ex \
 	&& apt-get update \
 	&& apt-get -y --no-install-recommends install \
 		rsync tar xz-utils dnsutils ssl-cert binutils \
+		net-tools iproute2 \
 		pv zsh \
 		graphviz \
 		# pdf
