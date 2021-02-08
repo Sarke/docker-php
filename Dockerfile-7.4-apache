@@ -67,7 +67,7 @@ RUN set -ex \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
 	&& pecl install \
-		event redis imagick igbinary ast xdebug \
+		event redis imagick igbinary ast xdebug swoole \
 	&& docker-php-ext-enable \
 		event redis imagick igbinary ast \
 	&& pecl install \
@@ -100,7 +100,6 @@ RUN chmod 700 \
 	&& curl -sS https://getcomposer.org/installer | php -- \
 		--filename=composer.phar \
 		--install-dir=/usr/local/bin \
-	&& composer global dumpautoload --optimize \
 	&& composer clear-cache
 
 WORKDIR /app

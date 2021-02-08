@@ -6,11 +6,22 @@ if [ -x "$(command -v usermod)" ] ; then
 	usermod -u ${PHP_USER_ID} www-data
 fi
 
+if [ 0 -ne "${PHP_ENABLE_SWOOLE:-0}" ] ; then
+	docker-php-ext-enable swoole
+	docker-php-ext-disable xdebug
+	docker-php-ext-disable blackfire
+	echo "blackfire: off"
+	echo "swoole: on"
+	echo "xdebug: off"
 # Enable xdebug by ENV variable
-if [ 0 -ne "${PHP_ENABLE_XDEBUG:-0}" ] ; then
+elif [ 0 -ne "${PHP_ENABLE_XDEBUG:-0}" ] ; then
 	docker-php-ext-enable xdebug
+	echo "blackfire: on"
+	echo "swoole: off"
 	echo "xdebug: on"
 else
+	echo "blackfire: on"
+	echo "swoole: off"
 	echo "xdebug: off"
 fi
 
