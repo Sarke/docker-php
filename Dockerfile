@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 	PHP_ENABLE_XDEBUG=0 \
 	PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
 	TERM=linux \
-	VERSION_PRESTISSIMO_PLUGIN=^0.3.7
+	VERSION_PANDOC=2.11.4
 
 RUN set -ex \
 	&& apt-get update \
@@ -43,7 +43,7 @@ RUN set -ex \
 	&& apt-get update \
 	&& apt-get -y --no-install-recommends install \
 		wkhtmltopdf \
-	&& curl -Ls 'https://github.com/jgm/pandoc/releases/download/2.10.1/pandoc-2.10.1-1-amd64.deb' -o /tmp/pandoc.deb \
+	&& curl -Ls "https://github.com/jgm/pandoc/releases/download/${VERSION_PANDOC}/pandoc-${VERSION_PANDOC}-1-amd64.deb" -o /tmp/pandoc.deb \
 	&& apt-get install /tmp/pandoc.deb \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -100,9 +100,6 @@ RUN chmod 700 \
 	&& curl -sS https://getcomposer.org/installer | php -- \
 		--filename=composer.phar \
 		--install-dir=/usr/local/bin \
-	# Install composer plugins
-	&&composer global require --optimize-autoloader \
-		"hirak/prestissimo" \
 	&& composer global dumpautoload --optimize \
 	&& composer clear-cache
 
