@@ -8,6 +8,6 @@ antigen bundle yii2
 antigen bundle command-not-found
 antigen bundle zsh-users/zsh-syntax-highlighting
 
-antigen theme bira
+antigen theme clean
 
 antigen apply
