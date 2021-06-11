@@ -48,6 +48,14 @@ RUN set -ex \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 RUN set -ex \
+	&& git clone --recursive https://github.com/adsr/phpspy.git \
+	&& cd phpspy \
+	&& make \
+	&& cp phpspy /usr/bin/ \
+	&& cd .. \
+	&& rm -rf phpspy
+
+RUN set -ex \
 	&& docker-php-source extract \
 	&& docker-php-ext-configure gd \
 		--enable-gd \
