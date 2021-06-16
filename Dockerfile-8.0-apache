@@ -76,10 +76,10 @@ RUN set -ex \
 		pdo_mysql pdo_pgsql \
 	&& pecl install \
 #		event redis imagick igbinary ast xdebug swoole \
-		redis igbinary ast xdebug swoole \
+		redis imagick-beta igbinary ast xdebug swoole \
 	&& docker-php-ext-enable \
 #		event redis imagick igbinary ast \
-		redis igbinary ast \
+		redis imagick igbinary ast \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
