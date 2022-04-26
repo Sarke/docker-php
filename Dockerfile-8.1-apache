@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:8.1-apache
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	COMPOSER_ALLOW_SUPERUSER=1 \
@@ -34,7 +34,7 @@ RUN set -ex \
 		# ssh2
 		libssh2-1-dev \
 		# other good stuff from yii2-docker
-		libxml2-dev libzip-dev zlib1g-dev default-mysql-client openssh-client nano unzip libcurl4-openssl-dev libssl-dev \
+		libxml2-dev libxslt-dev libzip-dev zlib1g-dev default-mysql-client openssh-client nano unzip libcurl4-openssl-dev libssl-dev \
 	&& chsh -s /usr/bin/zsh \
 	&& curl -sSL git.io/antigen > /root/antigen.zsh \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
@@ -74,14 +74,13 @@ RUN set -ex \
 		soap zip curl bcmath exif \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
+		xml xsl \
 	&& pecl install \
-		redis imagick igbinary ast xdebug swoole \
+#		event redis imagick igbinary ast xdebug swoole \
+		redis imagick-beta igbinary ast xdebug swoole \
 	&& docker-php-ext-enable \
+#		event redis imagick igbinary ast \
 		redis imagick igbinary ast \
-	&& pecl install \
-		uv-beta ssh2-beta \
-	&& docker-php-ext-enable \
-		uv ssh2 \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
@@ -91,13 +90,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 	&& tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
 	&& mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
 	&& printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
-	&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
-	# binary CLI
-	&& mkdir -p /tmp/blackfire \
-    && architecture=$(uname -m) \
-    && curl -A "Docker" -L https://blackfire.io/api/v1/releases/cli/linux/$architecture | tar zxp -C /tmp/blackfire \
-    && mv /tmp/blackfire/blackfire /usr/bin/blackfire \
-    && rm -rf /tmp/blackfire
+	&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
 
 # RUN a2enmod rewrite headers ssl
 RUN a2enmod rewrite headers
