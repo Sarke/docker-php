@@ -36,7 +36,6 @@ RUN set -ex \
 		# other good stuff from yii2-docker
 		libxml2-dev libzip-dev zlib1g-dev default-mysql-client openssh-client nano unzip libcurl4-openssl-dev libssl-dev \
 	&& chsh -s /usr/bin/zsh \
-	&& curl -sSL git.io/antigen > /root/antigen.zsh \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 RUN set -ex \
@@ -80,9 +79,9 @@ RUN set -ex \
 RUN set -ex \
 	&& docker-php-source extract \
 	&& pecl install \
-		redis imagick igbinary ast xdebug swoole \
+		redis imagick igbinary ast zstd xdebug swoole \
 	&& docker-php-ext-enable \
-		redis imagick igbinary ast \
+		redis imagick igbinary ast zstd \
 	&& pecl install \
 		uv-beta ssh2-beta \
 	&& docker-php-ext-enable \
