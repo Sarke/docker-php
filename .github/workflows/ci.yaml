@@ -31,30 +31,6 @@ jobs:
           file: Dockerfile-7.4-apache
           tags: sarkedev/php:7.4-apache
 
-  # docker_80:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     -
-  #       name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v1
-  #     -
-  #       name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v1
-  #     -
-  #       name: Login to DockerHub
-  #       uses: docker/login-action@v1
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     -
-  #       name: Build and push 8.0
-  #       id: docker_build_80
-  #       uses: docker/build-push-action@v2
-  #       with:
-  #         push: true
-  #         file: Dockerfile-8.0-apache
-  #         tags: sarkedev/php:8.0-apache
-
   docker_81:
     runs-on: ubuntu-latest
     steps:

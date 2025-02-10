@@ -1,12 +1,11 @@
-FROM sarkedev/php-fiber:apache
+FROM php:8.4-apache
 
 ENV DEBIAN_FRONTEND=noninteractive \
 	COMPOSER_ALLOW_SUPERUSER=1 \
 	PHP_USER_ID=33 \
 	PHP_ENABLE_XDEBUG=0 \
 	PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
-	TERM=linux \
-	VERSION_PANDOC=2.11.4
+	TERM=linux
 
 RUN set -ex \
 	&& apt-get update \
@@ -28,34 +27,20 @@ RUN set -ex \
 		# webp and gd
 		webp libwebp-dev libjpeg62-turbo-dev libpng-dev libxpm-dev libfreetype6-dev zlib1g-dev \
 		# magic
-		imagemagick libcurl3-dev libicu-dev libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev libonig-dev libmagickwand-dev libpq-dev libpng-dev \
+		imagemagick libcurl3-dev libicu-dev libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev libonig-dev \
+		libmagickwand-dev libmagickcore-dev libpq-dev libpng-dev \
 		# async
 		libevent-dev libuv1-dev \
 		# ssh2
 		libssh2-1-dev \
 		# other good stuff from yii2-docker
-		libxml2-dev libzip-dev zlib1g-dev default-mysql-client openssh-client nano unzip libcurl4-openssl-dev libssl-dev \
+		libxml2-dev libxslt-dev libzip-dev zlib1g-dev default-mysql-client openssh-client nano unzip libcurl4-openssl-dev libssl-dev \
+		# python3
+		# python3 python3-pip python3-venv \
 	&& chsh -s /usr/bin/zsh \
-	&& curl -sSL git.io/antigen > /root/antigen.zsh \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-RUN set -ex \
-	&& apt-get update \
-	&& apt-get -y --no-install-recommends install \
-		wkhtmltopdf \
-	&& curl -Ls "https://github.com/jgm/pandoc/releases/download/${VERSION_PANDOC}/pandoc-${VERSION_PANDOC}-1-amd64.deb" -o /tmp/pandoc.deb \
-	&& apt-get install /tmp/pandoc.deb \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-RUN set -ex \
-	&& git clone --recursive https://github.com/adsr/phpspy.git \
-	&& cd phpspy \
-	&& make \
-	&& cp phpspy /usr/bin/ \
-	&& cd .. \
-	&& rm -rf phpspy
-
-RUN set -ex \
+	RUN set -ex \
 	&& docker-php-source extract \
 	&& docker-php-ext-configure gd \
 		--enable-gd \
@@ -64,40 +49,45 @@ RUN set -ex \
 		--with-webp \
 	&& docker-php-ext-install \
 		gd \
-	&& docker-php-ext-configure imap \
-		--with-kerberos \
-		--with-imap-ssl \
-	&& docker-php-ext-install \
-		imap \
 	&& docker-php-ext-install \
 		pcntl posix sockets ffi \
 		soap zip curl bcmath exif \
 		iconv intl mbstring opcache \
 		pdo_mysql pdo_pgsql \
-	&& pecl install \
-#		event redis imagick igbinary ast xdebug swoole \
-		redis imagick-beta igbinary ast xdebug swoole \
-	&& docker-php-ext-enable \
-#		event redis imagick igbinary ast \
-		redis imagick igbinary ast \
+		xml xsl \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
-RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-	&& curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s "https://blackfire.io/api/v1/releases/probe/php/linux/amd64/{$version}" \
-	&& mkdir -p /tmp/blackfire \
-	&& tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
-	&& mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-	&& printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
-	&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
+	RUN set -ex \
+	&& docker-php-source extract \
+	&& pecl install \
+#		event redis imagick igbinary ast xdebug swoole \
+		imap redis igbinary ast xdebug \
+	&& docker-php-ext-enable \
+#		event redis imagick igbinary ast \
+		imap redis igbinary ast \
+	&& rm -rf /tmp/* \
+	&& docker-php-source delete
+
+	RUN set -ex \
+		&& docker-php-source extract \
+		&& pecl install \
+			imagick-beta \
+		&& docker-php-ext-enable \
+			imagick \
+		&& rm -rf /tmp/* \
+		&& docker-php-source delete
+
+# Ensure runtime and assets directories exist
+RUN mkdir -p /app/runtime /app/web/assets \
+	&& chown -R www-data:www-data /app/runtime /app/web/assets \
+	&& chmod -R 775 /app/runtime /app/web/assets
 
 # RUN a2enmod rewrite headers ssl
 RUN a2enmod rewrite headers
 
 COPY copy/base /
 COPY copy/apache /
-
-RUN zsh /root/setup.zsh
 
 # Add GITHUB_API_TOKEN support for composer
 RUN chmod 700 \
