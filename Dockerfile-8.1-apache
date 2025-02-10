@@ -94,7 +94,8 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 # RUN a2enmod rewrite headers ssl
 RUN a2enmod rewrite headers
 
-COPY copy /
+COPY copy/base /
+COPY copy/apache /
 
 RUN curl -sfL git.io/antibody | sh -s - -b /usr/local/bin \
 	&& antibody bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh \

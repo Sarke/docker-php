@@ -1,0 +1,70 @@
+
+x-defaults:
+
+  default: &default
+    restart: unless-stopped
+    environment:
+      PHP_ENABLE_XDEBUG: 0
+#    ports:
+#      - "80:80"
+    volumes:
+      - "/home/peter/github:/app"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+services:
+  php74:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-7.4-apache
+    image: 'sarkedev/php:7.4-apache'
+    container_name: php74
+
+  # php80:
+  #   <<: *default
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile-8.0-apache
+  #   image: 'sarkedev/php:8.0-apache'
+  #   container_name: php80
+
+  php81:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-8.1-apache
+    image: 'sarkedev/php:8.1-apache'
+    container_name: php81
+
+  github-php74:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-7.4-apache
+    image: 'ghcr.io/sarkedev/php:7.4-apache'
+    container_name: php74
+
+  github-php81:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-8.1-apache
+    image: 'ghcr.io/sarke/php:8.1-apache'
+    container_name: php81
+
+  github-php84:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-8.4-apache
+    image: 'ghcr.io/sarke/php:8.4-apache'
+    container_name: php84
+
+  github-php84-fpm:
+    <<: *default
+    build:
+      context: .
+      dockerfile: Dockerfile-8.4-fpm
+    image: 'ghcr.io/sarke/php:8.4-fpm'
+    container_name: php84-fpm
