@@ -40,7 +40,7 @@ RUN set -ex \
 	&& chsh -s /usr/bin/zsh \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-	RUN set -ex \
+RUN set -ex \
 	&& docker-php-source extract \
 	&& docker-php-ext-configure gd \
 		--enable-gd \
@@ -58,7 +58,7 @@ RUN set -ex \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
-	RUN set -ex \
+RUN set -ex \
 	&& docker-php-source extract \
 	&& pecl install \
 #		event redis imagick igbinary ast xdebug swoole \
@@ -69,14 +69,14 @@ RUN set -ex \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
-	RUN set -ex \
-		&& docker-php-source extract \
-		&& pecl install \
-			imagick-beta \
-		&& docker-php-ext-enable \
-			imagick \
-		&& rm -rf /tmp/* \
-		&& docker-php-source delete
+RUN set -ex \
+	&& docker-php-source extract \
+	&& pecl install \
+		imagick \
+	&& docker-php-ext-enable \
+		imagick \
+	&& rm -rf /tmp/* \
+	&& docker-php-source delete
 
 # Ensure runtime and assets directories exist
 RUN mkdir -p /app/runtime /app/web/assets \
