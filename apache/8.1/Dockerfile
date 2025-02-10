@@ -97,10 +97,6 @@ RUN a2enmod rewrite headers
 COPY copy/base /
 COPY copy/apache /
 
-RUN curl -sfL git.io/antibody | sh -s - -b /usr/local/bin \
-	&& antibody bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh \
-	&& zsh /root/setup.zsh
-
 # Add GITHUB_API_TOKEN support for composer
 RUN chmod 700 \
 	/usr/local/bin/docker-php-entrypoint \

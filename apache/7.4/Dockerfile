@@ -83,7 +83,7 @@ RUN set -ex \
 	&& docker-php-ext-enable \
 		redis imagick igbinary ast zstd \
 	&& pecl install \
-		uv-beta ssh2-beta \
+		uv-0.2.4 ssh2-beta \
 	&& docker-php-ext-enable \
 		uv ssh2 \
 	&& rm -rf /tmp/* \
@@ -108,10 +108,6 @@ RUN a2enmod rewrite headers
 
 COPY copy/base /
 COPY copy/apache /
-
-RUN curl -sfL git.io/antibody | sh -s - -b /usr/local/bin \
-	&& antibody bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh \
-	&& zsh /root/setup.zsh
 
 # Add GITHUB_API_TOKEN support for composer
 RUN chmod 700 \
