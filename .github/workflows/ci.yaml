@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: Dockerfile-7.4-apache
+          file: apache/7.4/Dockerfile
           tags: sarkedev/php:7.4-apache
 
   docker_81:
@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: Dockerfile-8.1-apache
+          file: apache/8.1/Dockerfile
           tags: sarkedev/php:8.1-apache
 
   docker_84:
@@ -76,7 +76,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: Dockerfile-8.4-apache
+          file: apache/8.4/Dockerfile
           tags: sarkedev/php:8.4-apache
 
   # docker_84_fpm:
@@ -100,5 +100,5 @@ jobs:
   #       uses: docker/build-push-action@v2
   #       with:
   #         push: true
-  #         file: Dockerfile-8.4-fpm
+  #         file: fpm/8.4/Dockerfile
   #         tags: sarkedev/php:8.4-fpm
