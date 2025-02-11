@@ -42,6 +42,4 @@ jobs:
         with:
           file: ${{ matrix.dockerfile }}
           push: true
-          tags: |
-            ${{ matrix.dockerhub_tag }}
-            ghcr.io/${{ matrix.dockerhub_tag }}
+          tags: ${{ matrix.tag }}
