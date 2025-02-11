@@ -91,19 +91,18 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 	&& printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
 	&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
 
-# RUN a2enmod rewrite headers ssl
-RUN a2enmod rewrite headers
+COPY copy/base copy/apache /
 
-RUN git clone --depth=1 https://github.com/mattmc3/antidote.git /root/.antidote \
-	&& antidote bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh
-
-COPY copy/base /
-COPY copy/apache /
-
-# Add GITHUB_API_TOKEN support for composer
-RUN chmod 700 \
-	/usr/local/bin/docker-php-entrypoint \
-	/usr/local/bin/composer \
+RUN set -ex \
+	# Apache modules
+	&& a2enmod rewrite headers ssl \
+	# antidote
+	&& git clone --depth=1 https://github.com/mattmc3/antidote.git /root/.antidote \
+	&& zsh /root/setup.zsh \
+	# Add GITHUB_API_TOKEN support for composer
+	&& chmod 700 \
+		/usr/local/bin/docker-php-entrypoint \
+		/usr/local/bin/composer \
 	# Install composer
 	&& curl -sS https://getcomposer.org/installer | php -- \
 		--filename=composer.phar \
