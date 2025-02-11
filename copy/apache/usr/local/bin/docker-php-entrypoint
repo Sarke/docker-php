@@ -40,4 +40,64 @@ if [ "${1#-}" != "$1" ]; then
 	fi
 fi
 
+# Clone repository if GIT_REPOSITORY is set
+if [ -n "${GIT_REPOSITORY:-}" ] ; then
+	# Ensure git is installed
+	if ! [ -x "$(command -v git)" ]; then
+		apt-get update && apt-get install -y git
+	fi
+
+	# Set default branch if not specified
+	GIT_BRANCH="${GIT_BRANCH:-main}"
+
+	# Create or clean /app directory
+	mkdir -p /app
+	rm -rf /app/*
+
+	# Determine which token to use based on the repository domain.
+	TOKEN=""
+	if echo "$GIT_REPOSITORY" | grep -q "github.com"; then
+		TOKEN="${GITHUB_TOKEN:-}"
+	elif echo "$GIT_REPOSITORY" | grep -q "gitlab.com"; then
+		TOKEN="${GITLAB_TOKEN:-}"
+	fi
+
+	# Construct the REPO_URL. If a token is available, prepend it.
+	if [ -n "$TOKEN" ]; then
+		REPO_URL="https://oauth2:${TOKEN}@${GIT_REPOSITORY#https://}"
+	else
+		REPO_URL="$GIT_REPOSITORY"
+	fi
+
+	# Clone the repository
+	TEMP_DIR="/tmp/cloned_git_repo"
+
+	# If the temporary directory already exists, remove it to avoid clone errors.
+	if [ -d "$TEMP_DIR" ]; then
+		echo "Removing existing temporary directory: $TEMP_DIR"
+		rm -rf "$TEMP_DIR"
+	fi
+
+	# Clone the specified branch of the repository into the temporary directory.
+	git clone --depth 1 --branch "$GIT_BRANCH" "$REPO_URL" "$TEMP_DIR"
+
+	# Move non-hidden files and directories from the temporary clone to /app.
+	mv "$TEMP_DIR"/* /app/
+
+	# Move hidden files and directories (those starting with a dot) to /app.
+	# The pattern '.[!.]*' matches hidden files, excluding '.' and '..'.
+	mv "$TEMP_DIR"/.[!.]* /app/ 2>/dev/null || true
+
+	# Remove the temporary clone directory as it's no longer needed.
+	rm -rf "$TEMP_DIR"
+
+	cd /app
+	composer install --no-dev --optimize-autoloader --no-interaction
+
+fi
+
+mkdir -p /app/runtime /app/web/assets
+chown -R www-data:www-data /app/runtime /app/web/assets
+chmod -R 775 /app/runtime /app/web/assets
+
 exec "$@"

@@ -29,6 +29,14 @@ services:
     image: 'sarkedev/php:8.1-apache'
     container_name: php81
 
+  php84:
+    <<: *default
+    build:
+      context: .
+      dockerfile: apache/8.4/Dockerfile
+    image: 'sarkedev/php:8.4-apache'
+    container_name: php84
+
   github-php74:
     <<: *default
     build:

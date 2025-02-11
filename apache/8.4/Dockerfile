@@ -86,8 +86,7 @@ RUN mkdir -p /app/runtime /app/web/assets \
 	&& chown -R www-data:www-data /app/runtime /app/web/assets \
 	&& chmod -R 775 /app/runtime /app/web/assets
 
-# RUN a2enmod rewrite headers ssl
-RUN a2enmod rewrite headers
+RUN a2enmod rewrite headers ssl
 
 COPY copy/base /
 COPY copy/apache /
