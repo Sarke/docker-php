@@ -43,3 +43,5 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ matrix.tag }}
+          cache-from: type=registry,ref=${{ matrix.tag }}
+          cache-to: type=inline
