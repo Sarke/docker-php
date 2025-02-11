@@ -106,6 +106,9 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 # RUN a2enmod rewrite headers ssl
 RUN a2enmod rewrite headers
 
+RUN git clone --depth=1 https://github.com/mattmc3/antidote.git /root/.antidote \
+	&& antidote bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh
+
 COPY copy/base /
 COPY copy/apache /
 
