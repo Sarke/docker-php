@@ -92,7 +92,7 @@ if [ -n "${GIT_REPOSITORY:-}" ] ; then
 	rm -rf "$TEMP_DIR"
 
 	cd /app
-	composer install --no-dev --optimize-autoloader --no-interaction
+	composer install --optimize-autoloader --no-interaction
 
 fi
 

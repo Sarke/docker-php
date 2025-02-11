@@ -88,6 +88,9 @@ RUN mkdir -p /app/runtime /app/web/assets \
 
 RUN a2enmod rewrite headers ssl
 
+RUN curl -sfL git.io/antibody | sh -s - -b /usr/local/bin \
+	&& antibody bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh
+
 COPY copy/base /
 COPY copy/apache /
 
