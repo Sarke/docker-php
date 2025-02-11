@@ -19,16 +19,16 @@ RUN set -ex \
 		ghostscript qpdf poppler-utils \
 		# other good stuff from yii2-docker
 		default-mysql-client openssh-client nano unzip \
-		# python3
-		# python3 python3-pip python3-venv \
 	&& chsh -s /usr/bin/zsh \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+# Don't use the URL, it will break the cache
+#ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+# Only copy this bin so any other changed files won't bust the cache as well
+COPY copy/base/usr/local/bin/install-php-extensions /usr/local/bin/
 
 RUN set -ex \
 	&& IPE_GD_WITHOUTAVIF=1 \
-	&& IPE_SWOOLE_WITHOUT_IOURING=1 \
 	&& install-php-extensions \
 		ast \
 		bcmath \
@@ -55,6 +55,7 @@ RUN set -ex \
 		zip \
 		zstd \
 	&& IPE_DONT_ENABLE=1 \
+	&& IPE_SWOOLE_WITHOUT_IOURING=1 \
 	&& install-php-extensions \
 		blackfire \
 		swoole \
@@ -68,7 +69,7 @@ RUN set -ex \
 	&& a2enmod rewrite headers ssl \
 	# antidote
 	&& git clone --depth=1 https://github.com/mattmc3/antidote.git /root/.antidote \
-	&& antidote bundle < /root/.zsh_plugins.txt > /root/.zsh_plugins.sh \
+	&& zsh /root/setup.zsh \
 	# Add GITHUB_API_TOKEN support for composer
 	&& chmod 700 \
 		/usr/local/bin/docker-php-entrypoint \
