@@ -69,14 +69,17 @@ RUN set -ex \
 	&& rm -rf /tmp/* \
 	&& docker-php-source delete
 
-RUN set -ex \
-	&& docker-php-source extract \
-	&& pecl install \
-		imagick \
-	&& docker-php-ext-enable \
-		imagick \
-	&& rm -rf /tmp/* \
-	&& docker-php-source delete
+# RUN set -ex \
+# 	&& docker-php-source extract \
+# 	&& pecl install \
+# 		imagick \
+# 	&& docker-php-ext-enable \
+# 		imagick \
+# 	&& rm -rf /tmp/* \
+# 	&& docker-php-source delete
+
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN install-php-extensions imagick
 
 # Ensure runtime and assets directories exist
 RUN mkdir -p /app/runtime /app/web/assets \
