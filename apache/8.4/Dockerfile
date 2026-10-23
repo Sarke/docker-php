@@ -68,7 +68,6 @@ RUN set -ex \
 	# Apache modules
 	&& a2enmod rewrite headers ssl \
 	# antidote
-	&& git clone --depth=1 https://github.com/mattmc3/antidote.git /root/.antidote \
 	&& zsh /root/setup.zsh \
 	# Add GITHUB_API_TOKEN support for composer
 	&& chmod 700 \
