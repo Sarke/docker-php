@@ -21,14 +21,6 @@ services:
     image: 'sarkedev/php:7.4-apache'
     container_name: php74
 
-  php81:
-    <<: *default
-    build:
-      context: .
-      dockerfile: apache/8.1/Dockerfile
-    image: 'sarkedev/php:8.1-apache'
-    container_name: php81
-
   php84:
     <<: *default
     build:
@@ -37,6 +29,14 @@ services:
     image: 'sarkedev/php:8.4-apache'
     container_name: php84
 
+  php85:
+    <<: *default
+    build:
+      context: .
+      dockerfile: apache/8.5/Dockerfile
+    image: 'sarkedev/php:8.5-apache'
+    container_name: php85
+
   github-php74:
     <<: *default
     build:
@@ -44,14 +44,6 @@ services:
       dockerfile: apache/7.4/Dockerfile
     image: 'ghcr.io/sarkedev/php:7.4-apache'
     container_name: php74
-
-  github-php81:
-    <<: *default
-    build:
-      context: .
-      dockerfile: apache/8.1/Dockerfile
-    image: 'ghcr.io/sarke/php:8.1-apache'
-    container_name: php81
 
   github-php84:
     <<: *default

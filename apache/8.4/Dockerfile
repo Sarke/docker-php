@@ -55,10 +55,10 @@ RUN set -ex \
 		zip \
 		zstd \
 	&& IPE_DONT_ENABLE=1 \
-	&& IPE_SWOOLE_WITHOUT_IOURING=1 \
+	# && IPE_SWOOLE_WITHOUT_IOURING=1 \
 	&& install-php-extensions \
 		blackfire \
-		swoole \
+		# swoole \ # conflicts with ssh2
 		xdebug \
 	&& echo "Done installing PHP extensions"
 
