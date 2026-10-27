@@ -36,12 +36,38 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build and push Docker image for PHP ${{ matrix.version }}
+      - name: Build Docker image for PHP ${{ matrix.version }}
         uses: docker/build-push-action@v7
         with:
           context: .
           file: ${{ matrix.dockerfile }}
-          push: true
+          load: true
           tags: ${{ matrix.tag }}
           cache-from: type=registry,ref=${{ matrix.tag }}
           cache-to: type=inline
+
+      - name: Smoke test PHP ${{ matrix.version }} image
+        run: |
+          set -eu
+          image="${{ matrix.tag }}"
+          name="php-smoke-${{ matrix.version }}"
+          trap 'status=$?; if [ "$status" -ne 0 ]; then docker logs "$name" 2>&1 || true; fi; docker rm -f "$name" >/dev/null 2>&1 || true' EXIT
+          docker run -d --name "$name" -p 127.0.0.1:8080:80 "$image"
+
+          docker exec "$name" sh -ec 'mkdir -p /app/web && printf "<?php echo PHP_VERSION;" > /app/web/smoke.php'
+          for attempt in $(seq 1 30); do
+            if output="$(curl --fail --silent --connect-timeout 1 --max-time 2 http://127.0.0.1:8080/smoke.php)"; then
+              printf 'HTTP PHP version: %s\n' "$output"
+              case "$output" in
+                "${{ matrix.version }}".*) exit 0 ;;
+                *) printf 'Expected PHP ${{ matrix.version }}, got %s\n' "$output" >&2; exit 1 ;;
+              esac
+            fi
+            sleep 1
+          done
+
+          printf 'Apache/PHP smoke test timed out for %s\n' "$image" >&2
+          exit 1
+
+      - name: Push verified PHP ${{ matrix.version }} image
+        run: docker push "${{ matrix.tag }}"
