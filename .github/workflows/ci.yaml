@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         include:
-          # - version: 7.4
-          #   dockerfile: apache/7.4/Dockerfile
-          #   tag: sarkedev/php:7.4-apache
+          - version: 7.4
+            dockerfile: apache/7.4/Dockerfile
+            tag: sarkedev/php:7.4-apache
           - version: 8.4
             dockerfile: apache/8.4/Dockerfile
             tag: sarkedev/php:8.4-apache
