@@ -67,8 +67,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && mv /tmp/blackfire/blackfire /usr/bin/blackfire \
     && rm -rf /tmp/blackfire
 
-COPY copy/base copy/apache /
-COPY copy/apache-7.4 /
+COPY copy/base copy/apache apache/7.4/copy /
 
 RUN set -ex \
 	# Apache modules
